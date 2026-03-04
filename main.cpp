@@ -10,11 +10,11 @@ struct BiList {
 template< class T >
 BiList< T > * add(BiList< T > * h, const T & d)
 {
-  BiList< T > * p = h->prev;
-  BiList< T > * r = new BiList< T > {d, h, p};
+  BiList< T > * prev = h->prev;
+  BiList< T > * r = new BiList< T > {d, h, prev};
   h->prev = r;
-  if (p) {
-    p->next = r;
+  if (prev) {
+    prev->next = r;
   }
   return r;
 }
@@ -22,23 +22,50 @@ BiList< T > * add(BiList< T > * h, const T & d)
 template< class T >
 BiList< T > * insert(BiList< T > * h, const T & d)
 {
-  BiList< T > * n = h->prev;
-  BiList< T > * r = new BiList< T > {d, n, h};
+  BiList< T > * next = h->next;
+  BiList< T > * r = new BiList< T > {d, next, h};
   h->next = r;
-  if (n) {
-    n->prev = r;
+  if (next) {
+    next->prev = r;
   }
   return r;
 }
 
 template< class T >
-BiList< T > * cut(BiList< T > * h) noexcept;
+BiList< T > * cut(BiList< T > * h) noexcept
+{
+  BiList< T > * next = h->next;
+  BiList< T > * prev = h->prev;
+  if (prev) {
+    prev->next = next;
+  }
+  if (next) {
+    next->prev = prev;
+  }
+  delete h;
+  if (next) {
+    return next;
+  }
+  return prev;
+}
 
 template< class T >
-BiList< T > * eraseAfter(BiList< T > * h) noexcept;
+BiList< T > * eraseAfter(BiList< T > * h) noexcept
+{
+  if (h->next) {
+    cut(h->next);
+  }
+  return h;
+}
 
 template< class T >
-BiList< T > * eraseBefore(BiList< T > * h) noexcept;
+BiList< T > * eraseBefore(BiList< T > * h) noexcept
+{
+  if (h->prev) {
+    cut(h->prev);
+  }
+  return h;
+}
 
 template< class T >
 BiList< T > * clear(BiList< T > * h, BiList< T > * e) noexcept;
