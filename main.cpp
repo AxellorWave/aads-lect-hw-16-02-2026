@@ -8,6 +8,15 @@ struct BiList {
 };
 
 template< class T >
+BiList< T > * getTail(BiList< T > * h)
+{
+  while (h->next) {
+    h = h->next;
+  }
+  return h;
+}
+
+template< class T >
 BiList< T > * add(BiList< T > * h, const T & d)
 {
   BiList< T > * prev = h->prev;
@@ -80,7 +89,7 @@ template< class T, class F >
 F traverse(F f, BiList< T > * h, BiList< T > * e)
 {
   while (h != e) {
-    f(h);
+    f(h->val);
     h = h->next;
   }
   return f;
@@ -90,13 +99,50 @@ template< class T, class F >
 F traverseRevers(F f, BiList< T > * h, BiList< T > * e)
 {
   while (h != e) {
-    f(h);
+    f(h->val);
     h = h->prev;
   }
   return f;
 }
 
+template< class T >
+BiList< T > * convert(const T * data, size_t size)
+{
+  BiList< T > * h = new BiList< T > {data[0], nullptr, nullptr};
+  BiList< T > * temp = h;
+  try {
+    for (size_t i = 1; i < size; ++i) {
+      temp = insert(temp, data[i]);
+    }
+  } catch (...) {
+    BiList<T>* null_ptr = nullptr;
+    clear(h, null_ptr);
+    throw;
+  }
+  return h;
+}
+
+void printInt(int num)
+{
+  std::cout << num << " ";
+}
+
+template< int K >
+void multiply(int & num)
+{
+  num *= K;
+}
+
 int main()
 {
+  constexpr size_t size = 5;
+  int array[size] = {1, 2, 3, 4, 5};
+  BiList< int > * list = convert(array, size);
+  BiList<int>* null_ptr = nullptr;
+  traverse(printInt, list, null_ptr);
   std::cout << "\n";
+  traverse(multiply< 2 >, list, null_ptr);
+  traverseRevers(printInt, getTail(list), null_ptr);
+  std::cout << "\n";
+  clear(list, null_ptr);
 }
